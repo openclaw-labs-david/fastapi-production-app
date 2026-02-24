@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite+aiosqlite:///./app.db
+      - SECRET_KEY=your-secret-key-change-in-production
+    volumes:
+      - ./app.db:/app/app.db
+    restart: unless-stopped
+
+  # PostgreSQL service (optional)
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=fastapi_app
+      - POSTGRES_USER=fastapi_user
+      - POSTGRES_PASSWORD=fastapi_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
