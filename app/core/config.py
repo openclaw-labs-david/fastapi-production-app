@@ -9,16 +9,19 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     
     # Database
-    DATABASE_URL: str = "sqlite:///./app.db"
+    DATABASE_URL: Optional[str] = None
     POSTGRES_USER: Optional[str] = None
     POSTGRES_PASSWORD: Optional[str] = None
     POSTGRES_SERVER: Optional[str] = None
     POSTGRES_DB: Optional[str] = None
     
     @property
-    def DATABASE_URL(self) -> str:
-        if self.POSTGRES_USER and self.POSTGRES_PASSWORD:
-            return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}/{self.POSTGRES_DB}"
+    def database_url(self) -> str:
+        # Priority: Railway DATABASE_URL > PostgreSQL components > SQLite
+        if self.DATABASE_URL:
+            return self.DATABASE_URL
+        elif self.POSTGRES_USER and self.POSTGRES_PASSWORD and self.POSTGRES_SERVER:
+            return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}/{self.POSTGRES_DB or 'fastapi_app'}"
         return "sqlite+aiosqlite:///./app.db"
     
     # Security
