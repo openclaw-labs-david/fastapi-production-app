@@ -15,9 +15,7 @@ router = APIRouter()
 
 
 @router.post("/", response_model=UserResponse)
-async def create_new_user(
-    user: UserCreate, db: AsyncSession = Depends(get_db)
-):
+async def create_new_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
     """Create a new user"""
     return await create_user(db=db, user=user)
 
@@ -52,9 +50,7 @@ async def update_existing_user(
 
 
 @router.delete("/{user_id}")
-async def delete_existing_user(
-    user_id: int, db: AsyncSession = Depends(get_db)
-):
+async def delete_existing_user(user_id: int, db: AsyncSession = Depends(get_db)):
     """Delete a user"""
     success = await delete_user(db, user_id=user_id)
     if not success:

@@ -34,9 +34,7 @@ async def get_user_by_email(db: AsyncSession, email: str) -> Optional[User]:
     return result.scalar_one_or_none()
 
 
-async def get_users(
-    db: AsyncSession, skip: int = 0, limit: int = 100
-) -> List[User]:
+async def get_users(db: AsyncSession, skip: int = 0, limit: int = 100) -> List[User]:
     """Get multiple users"""
     result = await db.execute(select(User).offset(skip).limit(limit))
     return result.scalars().all()

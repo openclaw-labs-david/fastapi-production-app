@@ -20,11 +20,7 @@ class Settings(BaseSettings):
         # Priority: Railway DATABASE_URL > PostgreSQL components > SQLite
         if self.DATABASE_URL:
             return self.DATABASE_URL
-        elif (
-            self.POSTGRES_USER
-            and self.POSTGRES_PASSWORD
-            and self.POSTGRES_SERVER
-        ):
+        elif self.POSTGRES_USER and self.POSTGRES_PASSWORD and self.POSTGRES_SERVER:
             db_name = self.POSTGRES_DB or "fastapi_app"
             return (
                 f"postgresql+asyncpg://{self.POSTGRES_USER}:"
