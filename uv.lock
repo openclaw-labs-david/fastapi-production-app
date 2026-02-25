@@ -369,7 +369,7 @@ dependencies = [
     { name = "uvicorn", extra = ["standard"] },
 ]
 
-[package.optional-dependencies]
+[package.dev-dependencies]
 dev = [
     { name = "black" },
     { name = "flake8" },
@@ -388,24 +388,29 @@ requires-dist = [
     { name = "aiosqlite", specifier = ">=0.19.0" },
     { name = "alembic", specifier = ">=1.13.1" },
     { name = "argon2-cffi", specifier = ">=25.1.0" },
-    { name = "black", marker = "extra == 'dev'", specifier = ">=23.11.0" },
     { name = "fastapi", git = "https://github.com/tiangolo/fastapi" },
-    { name = "flake8", marker = "extra == 'dev'", specifier = ">=6.1.0" },
-    { name = "httpx", marker = "extra == 'test'", specifier = ">=0.25.2" },
-    { name = "isort", marker = "extra == 'dev'", specifier = ">=5.13.2" },
-    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.7.1" },
     { name = "passlib", specifier = ">=1.7.4" },
-    { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=3.5.0" },
     { name = "pydantic", extras = ["email"], specifier = ">=2.5.0" },
     { name = "pydantic-settings", specifier = ">=2.1.0" },
-    { name = "pytest", marker = "extra == 'test'", specifier = ">=7.4.3" },
-    { name = "pytest-asyncio", marker = "extra == 'test'", specifier = ">=0.23.2" },
     { name = "python-jose", specifier = ">=3.3.0" },
     { name = "python-multipart", specifier = ">=0.0.6" },
     { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.0.23" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.24.0" },
 ]
-provides-extras = ["dev", "test"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "black", specifier = ">=23.11.0" },
+    { name = "flake8", specifier = ">=6.1.0" },
+    { name = "isort", specifier = ">=5.13.2" },
+    { name = "mypy", specifier = ">=1.7.1" },
+    { name = "pre-commit", specifier = ">=3.5.0" },
+]
+test = [
+    { name = "httpx", specifier = ">=0.25.2" },
+    { name = "pytest", specifier = ">=7.4.3" },
+    { name = "pytest-asyncio", specifier = ">=0.23.2" },
+]
 
 [[package]]
 name = "filelock"
