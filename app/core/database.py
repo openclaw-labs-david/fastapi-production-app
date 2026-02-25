@@ -1,6 +1,11 @@
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from collections.abc import AsyncGenerator
+
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 
 from app.core.config import settings
 
@@ -12,7 +17,7 @@ engine = create_async_engine(
 )
 
 # Create async session factory
-AsyncSessionLocal = sessionmaker(
+AsyncSessionLocal = async_sessionmaker(
     engine,
     class_=AsyncSession,
     expire_on_commit=False,
@@ -22,7 +27,7 @@ Base = declarative_base()
 
 
 # Dependency to get database session
-async def get_db():
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with AsyncSessionLocal() as session:
         try:
             yield session
@@ -30,7 +35,7 @@ async def get_db():
             await session.close()
 
 
-async def init_db():
+async def init_db() -> None:
     """Initialize database tables"""
     async with engine.begin() as conn:
         # Create all tables

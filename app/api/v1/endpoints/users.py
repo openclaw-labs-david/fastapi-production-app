@@ -1,3 +1,5 @@
+from typing import Sequence
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -15,7 +17,9 @@ router = APIRouter()
 
 
 @router.post("/", response_model=UserResponse)
-async def create_new_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
+async def create_new_user(
+    user: UserCreate, db: AsyncSession = Depends(get_db)
+) -> UserResponse:
     """Create a new user"""
     return await create_user(db=db, user=user)
 
@@ -23,14 +27,16 @@ async def create_new_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
 @router.get("/", response_model=list[UserResponse])
 async def read_users(
     skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_db)
-):
+) -> Sequence[UserResponse]:
     """Get all users"""
     users = await get_users(db, skip=skip, limit=limit)
     return users
 
 
 @router.get("/{user_id}", response_model=UserResponse)
-async def read_user(user_id: int, db: AsyncSession = Depends(get_db)):
+async def read_user(
+    user_id: int, db: AsyncSession = Depends(get_db)
+) -> UserResponse:
     """Get a specific user"""
     db_user = await get_user(db, user_id=user_id)
     if db_user is None:
@@ -41,7 +47,7 @@ async def read_user(user_id: int, db: AsyncSession = Depends(get_db)):
 @router.put("/{user_id}", response_model=UserResponse)
 async def update_existing_user(
     user_id: int, user_update: UserUpdate, db: AsyncSession = Depends(get_db)
-):
+) -> UserResponse:
     """Update a user"""
     db_user = await update_user(db, user_id=user_id, user_update=user_update)
     if db_user is None:
@@ -50,7 +56,9 @@ async def update_existing_user(
 
 
 @router.delete("/{user_id}")
-async def delete_existing_user(user_id: int, db: AsyncSession = Depends(get_db)):
+async def delete_existing_user(
+    user_id: int, db: AsyncSession = Depends(get_db)
+) -> dict[str, str]:
     """Delete a user"""
     success = await delete_user(db, user_id=user_id)
     if not success:
