@@ -3,33 +3,36 @@
 # CI/CD Validation Script for FastAPI Production App
 # Ensures code quality and dependency management standards
 
-set -euo pipefail
+set -uo pipefail
 
 echo "🚀 Starting CI/CD Validation..."
+
+# Track if any validation fails
+VALIDATION_FAILED=false
 
 # Check if poetry.lock exists
 if [ ! -f "poetry.lock" ]; then
     echo "❌ ERROR: poetry.lock file not found"
-    exit 1
+    VALIDATION_FAILED=true
 fi
 
 # Check poetry.lock file size (should not be empty)
 if [ ! -s "poetry.lock" ]; then
     echo "❌ ERROR: poetry.lock file is empty"
-    exit 1
+    VALIDATION_FAILED=true
 fi
 
 # Validate Dockerfile ENV format
 if grep -q "ENV PYTHONDONTWRITEBYTECODE 1" Dockerfile; then
     echo "❌ ERROR: Dockerfile contains legacy ENV format"
     echo "   Please use: ENV PYTHONDONTWRITEBYTECODE=1"
-    exit 1
+    VALIDATION_FAILED=true
 fi
 
 if grep -q "ENV PYTHONUNBUFFERED 1" Dockerfile; then
     echo "❌ ERROR: Dockerfile contains legacy ENV format"
     echo "   Please use: ENV PYTHONUNBUFFERED=1"
-    exit 1
+    VALIDATION_FAILED=true
 fi
 
 echo "✅ Dockerfile ENV format is correct"
@@ -62,7 +65,7 @@ if [ $POETRY_CHECK_EXIT -ne 0 ]; then
     else
         echo "❌ ERROR: Poetry configuration validation failed"
         echo "$POETRY_CHECK_OUTPUT"
-        exit 1
+        VALIDATION_FAILED=true
     fi
 else
     echo "✅ Poetry configuration is valid"
@@ -87,9 +90,15 @@ if [ -f "scripts/validate_dependencies.py" ]; then
     python scripts/validate_dependencies.py
     if [ $? -ne 0 ]; then
         echo "❌ ERROR: Python validation script failed"
-        exit 1
+        VALIDATION_FAILED=true
     fi
 fi
 
-echo "✅ All validation checks passed!"
-echo "✨ Ready for production deployment"
+# Final validation check
+if [ "$VALIDATION_FAILED" = true ]; then
+    echo "❌ Some validation checks failed. Please fix the issues above."
+    exit 1
+else
+    echo "✅ All validation checks passed!"
+    echo "✨ Ready for production deployment"
+fi
