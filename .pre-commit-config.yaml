@@ -13,7 +13,7 @@ repos:
     rev: 23.11.0
     hooks:
       - id: black
-        language_version: python3.9
+        language_version: python3.10
 
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
@@ -29,9 +29,9 @@ repos:
 
   - repo: local
     hooks:
-      - id: check-poetry-lock
-        name: Check Poetry Lock File
-        entry: poetry lock --check
+      - id: check-uv-lock
+        name: Check UV Lock File
+        entry: uv lock --check
         language: system
         pass_filenames: false
         always_run: true
@@ -41,7 +41,7 @@ repos:
     hooks:
       - id: validate-dependencies
         name: Validate Dependencies
-        entry: bash -c 'poetry check && poetry install --sync'
+        entry: bash -c 'uv sync --check'
         language: system
         pass_filenames: false
         always_run: true

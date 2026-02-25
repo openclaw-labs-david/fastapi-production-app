@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Dependency validation script for FastAPI production app.
-Checks that poetry.lock is properly synced with pyproject.toml
+Checks that uv.lock is properly synced with pyproject.toml
 """
 
 import subprocess
@@ -9,62 +9,42 @@ import sys
 import os
 from pathlib import Path
 
-def check_poetry_lock_sync():
-    """Check if poetry.lock is properly synced with pyproject.toml"""
+def check_uv_lock_sync():
+    """Check if uv.lock is properly synced with pyproject.toml"""
     try:
-        # Try multiple poetry paths
-        poetry_paths = ["poetry", "venv/bin/poetry"]
-        poetry_found = False
-        
-        for poetry_path in poetry_paths:
-            try:
-                # Run poetry check to validate configuration
-                result = subprocess.run(
-                    [poetry_path, "check"],
-                    capture_output=True,
-                    text=True,
-                    cwd=Path(__file__).parent.parent
-                )
-                poetry_found = True
-                break
-            except FileNotFoundError:
-                continue
-        
-        if not poetry_found:
-            print("❌ Poetry not found. Please install poetry first.")
+        # Check if uv is available
+        try:
+            result = subprocess.run(
+                ["uv", "sync", "--check"],
+                capture_output=True,
+                text=True,
+                cwd=Path(__file__).parent.parent
+            )
+        except FileNotFoundError:
+            print("❌ UV not found. Please install UV first.")
             return False
         
-        # Check if the error is just warnings (poetry check returns 0 for warnings, non-zero for errors)
+        # Check if the sync check passed
         if result.returncode != 0:
-            # Check if the output contains warnings but no actual errors
-            if "Warning:" in result.stderr and "Error:" not in result.stderr:
-                # Poetry check returns non-zero for warnings, but this is acceptable
-                print("⚠️ Poetry configuration has warnings but is valid")
-                print(f"Warnings: {result.stderr}")
-            elif "pyproject.toml changed significantly" in result.stderr:
-                # This is a specific error that can be handled
-                print("⚠️ poetry.lock needs regeneration but file structure is valid")
-                print(f"Info: {result.stderr}")
-            else:
-                print("❌ Poetry configuration validation failed")
-                print(f"Error: {result.stderr}")
-                return False
+            print("❌ UV dependency validation failed")
+            print(f"Error: {result.stderr}")
+            return False
         
-        # Check if poetry.lock file exists and is not empty
-        lock_file_path = Path(__file__).parent.parent / "poetry.lock"
+        # Check if uv.lock file exists and is not empty
+        lock_file_path = Path(__file__).parent.parent / "uv.lock"
         if not lock_file_path.exists():
-            print("❌ poetry.lock file not found")
+            print("❌ uv.lock file not found")
             return False
         
         if lock_file_path.stat().st_size == 0:
-            print("❌ poetry.lock file is empty")
+            print("❌ uv.lock file is empty")
             return False
         
-        print("✅ poetry.lock is properly synced with pyproject.toml")
+        print("✅ uv.lock is properly synced with pyproject.toml")
         return True
         
     except Exception as e:
-        print(f"❌ Error checking poetry lock: {e}")
+        print(f"❌ Error checking UV lock: {e}")
         return False
 
 def validate_dockerfile_env_format():
@@ -98,12 +78,30 @@ def validate_dockerfile_env_format():
     print("✅ Dockerfile ENV format is correct")
     return True
 
+def validate_python_version():
+    """Validate that Python version meets requirements"""
+    try:
+        import sys
+        python_version = sys.version_info
+        
+        if python_version.major != 3 or python_version.minor < 10:
+            print(f"❌ Python version {python_version.major}.{python_version.minor} does not meet requirement >=3.10")
+            return False
+        
+        print(f"✅ Python version {python_version.major}.{python_version.minor} meets requirement >=3.10")
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error validating Python version: {e}")
+        return False
+
 def main():
     """Run all validation checks"""
     print("🔍 Running dependency validation checks...\n")
     
     checks = [
-        ("Poetry Lock Sync", check_poetry_lock_sync),
+        ("Python Version", validate_python_version),
+        ("UV Lock Sync", check_uv_lock_sync),
         ("Dockerfile ENV Format", validate_dockerfile_env_format),
     ]
     

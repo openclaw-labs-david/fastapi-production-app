@@ -1,40 +1,51 @@
-[tool.poetry]
+[project]
 name = "fastapi-production-app"
 version = "0.1.0"
 description = "A production-ready FastAPI application"
-authors = ["Your Name <your.email@example.com>"]
+authors = [
+    {name = "Your Name", email = "your.email@example.com"}
+]
 readme = "README.md"
-packages = [{include = "app"}]
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.24.0",
+    "sqlalchemy[asyncio]>=2.0.23",
+    "alembic>=1.13.1",
+    "pydantic[email]>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "passlib>=1.7.4",
+    "python-jose>=3.3.0",
+    "python-multipart>=0.0.6",
+    "argon2-cffi>=25.1.0",
+    "aiosqlite>=0.19.0"
+]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-fastapi = "^0.109.0"
-uvicorn = {extras = ["standard"], version = "^0.24.0"}
-sqlalchemy = {extras = ["asyncio"], version = "^2.0.23"}
-alembic = "^1.13.1"
-pydantic = "^2.5.0"
-pydantic-settings = "^2.1.0"
-passlib = "^1.7.4"
-python-jose = "^3.3.0"
-python-multipart = "^0.0.6"
-argon2-cffi = "^25.1.0"
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.3",
+    "pytest-asyncio>=0.23.2",
+    "httpx>=0.25.2",
+    "black>=23.11.0",
+    "isort>=5.13.2",
+    "flake8>=6.1.0",
+    "mypy>=1.7.1",
+    "pre-commit>=3.5.0"
+]
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^7.4.3"
-pytest-asyncio = "^0.23.2"
-httpx = "^0.25.2"
-black = "^23.11.0"
-isort = "^5.13.2"
-flake8 = "^6.1.0"
-mypy = "^1.7.1"
-pre-commit = "^3.5.0"
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
 
-[tool.poetry.scripts]
+[project.scripts]
 app = "app.main:app"
 
+[tool.uv.sources]
+fastapi = { git = "https://github.com/tiangolo/fastapi" }
+
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
 
 [tool.black]
 line-length = 88

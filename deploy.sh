@@ -35,7 +35,7 @@ echo "🌐 Your app will be available at: railway status | grep -o 'https://[^ ]
 
 # Run database migrations
 echo "🗄️ Running database migrations..."
-railway run poetry run alembic upgrade head
+railway run uv run alembic upgrade head
 
 echo "🎉 Deployment successful!"
 echo "📋 Next steps:"

@@ -50,7 +50,7 @@ case $choice in
         
         # Run migrations
         echo "🗄️ Running database migrations..."
-        railway run poetry run alembic upgrade head
+        railway run uv run alembic upgrade head
         
         echo "🎉 Railway deployment complete!"
         echo "📊 Check logs: railway logs"
@@ -85,7 +85,7 @@ case $choice in
         
         # Run migrations
         echo "🗄️ Running database migrations..."
-        heroku run poetry run alembic upgrade head
+        heroku run uv run alembic upgrade head
         
         # Open app
         heroku open

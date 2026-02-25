@@ -10,7 +10,7 @@ A production-ready FastAPI application with modern tooling, testing, and deploym
 - Pytest with async support
 - Docker containerization
 - GitHub Actions CI/CD
-- Poetry for dependency management
+- **UV for dependency management** (faster and more reliable)
 - Pre-commit hooks for code quality
 - OpenAPI documentation with Swagger UI
 - JWT authentication
@@ -20,8 +20,8 @@ A production-ready FastAPI application with modern tooling, testing, and deploym
 
 ### Prerequisites
 
-- Python 3.9+
-- Poetry
+- **Python 3.10+** (required for FastAPI compatibility)
+- **UV** (fast Python package manager)
 - Docker & Docker Compose
 - PostgreSQL (optional, SQLite for development)
 
@@ -35,7 +35,7 @@ cd fastapi-production-app
 
 2. Install dependencies:
 ```bash
-poetry install
+uv sync
 ```
 
 3. Set up environment variables:
@@ -46,12 +46,12 @@ cp .env.example .env
 
 4. Initialize the database:
 ```bash
-poetry run alembic upgrade head
+uv run alembic upgrade head
 ```
 
 5. Run the application:
 ```bash
-poetry run uvicorn app.main:app --reload
+uv run uvicorn app.main:app --reload
 ```
 
 ## Development
@@ -59,18 +59,18 @@ poetry run uvicorn app.main:app --reload
 ### Running Tests
 
 ```bash
-poetry run pytest
+uv run pytest
 ```
 
 ### Code Quality
 
 ```bash
-poetry run pre-commit run --all-files
+uv run pre-commit run --all-files
 ```
 
 ### Dependency Validation
 
-Validate that poetry.lock is properly synced and Dockerfile standards are met:
+Validate that uv.lock is properly synced and Dockerfile standards are met:
 
 ```bash
 # Run comprehensive validation
@@ -84,12 +84,12 @@ python scripts/validate_dependencies.py
 
 Create a new migration:
 ```bash
-poetry run alembic revision --autogenerate -m "migration_description"
+uv run alembic revision --autogenerate -m "migration_description"
 ```
 
 Apply migrations:
 ```bash
-poetry run alembic upgrade head
+uv run alembic upgrade head
 ```
 
 ## Deployment
@@ -137,9 +137,9 @@ Once running, access the API documentation:
 
 ## Quality Assurance
 
-### Preventing Poetry Lock Mismatches
+### Preventing Dependency Mismatches
 
-The project includes comprehensive validation to prevent poetry.lock mismatches:
+The project includes comprehensive validation to prevent dependency mismatches:
 
 1. **Pre-commit hooks**: Automatically validate lock file sync on commit
 2. **CI/CD validation**: Scripts ensure lock file is properly maintained
@@ -148,14 +148,14 @@ The project includes comprehensive validation to prevent poetry.lock mismatches:
 ### Validation Commands
 
 ```bash
-# Check poetry.lock sync
-poetry lock --check
+# Check uv.lock sync
+uv sync --check
 
 # Run all validation checks
 ./scripts/ci_validation.sh
 
 # Install pre-commit hooks
-poetry run pre-commit install
+uv run pre-commit install
 ```
 
 ## Project Structure
@@ -176,3 +176,24 @@ fastapi-production-app/
 │   └── validate_dependencies.py
 └── docs/              # Additional documentation
 ```
+
+## Why UV?
+
+This project uses **UV** instead of Poetry for dependency management because:
+
+- **Faster**: UV resolves dependencies significantly faster than Poetry
+- **More reliable**: UV has better caching and more predictable behavior
+- **Simpler configuration**: UV uses standard pyproject.toml format
+- **Better caching**: UV's caching system is more efficient
+- **Active development**: UV is actively maintained by the creators of Ruff
+
+## Migrating from Poetry
+
+If you're migrating from Poetry to UV:
+
+1. Remove Poetry files: `rm poetry.lock pyproject.toml` (backup first)
+2. Install UV: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+3. Generate new lock file: `uv lock`
+4. Install dependencies: `uv sync`
+
+All existing functionality remains the same - just replace `poetry run` with `uv run`.

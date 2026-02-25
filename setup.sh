@@ -5,16 +5,16 @@
 
 echo "🚀 Setting up FastAPI Production App..."
 
-# Check if Poetry is installed
-if ! command -v poetry &> /dev/null; then
-    echo "📦 Installing Poetry..."
-    curl -sSL https://install.python-poetry.org | python3 -
-    export PATH="$HOME/.local/bin:$PATH"
+# Check if UV is installed
+if ! command -v uv &> /dev/null; then
+    echo "📦 Installing UV..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    export PATH="$HOME/.cargo/bin:$PATH"
 fi
 
 # Install dependencies
 echo "📚 Installing dependencies..."
-poetry install
+uv sync
 
 # Set up environment file
 if [ ! -f .env ]; then
@@ -25,17 +25,17 @@ fi
 
 # Initialize database
 echo "🗄️  Setting up database..."
-poetry run alembic upgrade head
+uv run alembic upgrade head
 
 # Install pre-commit hooks
 echo "🔧 Installing pre-commit hooks..."
-poetry run pre-commit install
+uv run pre-commit install
 
 echo "✅ Setup complete!"
 echo ""
 echo "🎯 Next steps:"
 echo "1. Edit .env file with your configuration"
-echo "2. Run 'poetry run uvicorn app.main:app --reload' to start the server"
+echo "2. Run 'uv run uvicorn app.main:app --reload' to start the server"
 echo "3. Visit http://localhost:8000/docs for API documentation"
 echo ""
 echo "📚 Useful commands:"

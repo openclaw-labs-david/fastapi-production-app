@@ -1,5 +1,5 @@
-# Use Python 3.9 slim image
-FROM python:3.9-slim
+# Use Python 3.11 slim image (supports Python 3.10+ requirements)
+FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
@@ -11,18 +11,18 @@ ENV PYTHONPATH=/app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    gcc \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Poetry
-RUN pip install poetry
+# Install UV
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+ENV PATH="/root/.cargo/bin:${PATH}"
 
-# Copy poetry files
-COPY pyproject.toml poetry.lock* /app/
+# Copy UV files
+COPY pyproject.toml uv.lock* /app/
 
-# Install dependencies
-RUN poetry config virtualenvs.create false \
-    && poetry install --without dev --no-interaction --no-ansi
+# Install dependencies using UV
+RUN uv sync --frozen --no-dev
 
 # Copy application code
 COPY . /app/
@@ -40,4 +40,4 @@ HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
 # Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
