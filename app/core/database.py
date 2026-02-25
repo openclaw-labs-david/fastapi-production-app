@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
 from app.core.config import settings
 
 # Create async engine
@@ -19,6 +20,7 @@ AsyncSessionLocal = sessionmaker(
 
 Base = declarative_base()
 
+
 # Dependency to get database session
 async def get_db():
     async with AsyncSessionLocal() as session:
@@ -26,6 +28,7 @@ async def get_db():
             yield session
         finally:
             await session.close()
+
 
 async def init_db():
     """Initialize database tables"""
