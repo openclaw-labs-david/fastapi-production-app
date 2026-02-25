@@ -68,6 +68,18 @@ poetry run pytest
 poetry run pre-commit run --all-files
 ```
 
+### Dependency Validation
+
+Validate that poetry.lock is properly synced and Dockerfile standards are met:
+
+```bash
+# Run comprehensive validation
+./scripts/ci_validation.sh
+
+# Python validation script
+python scripts/validate_dependencies.py
+```
+
 ### Database Migrations
 
 Create a new migration:
@@ -82,6 +94,13 @@ poetry run alembic upgrade head
 
 ## Deployment
 
+### Quick Deployment
+
+Use the automated deployment script:
+```bash
+./setup-deployment.sh
+```
+
 ### Docker
 
 ```bash
@@ -91,17 +110,53 @@ docker-compose up --build
 ### Production Deployment
 
 The application is configured for deployment on:
-- Docker containers
-- Kubernetes
-- Cloud platforms (AWS, GCP, Azure)
+- **Railway** (Recommended - Free tier)
+- **Heroku**
+- **Docker containers**
+- **Kubernetes**
+- **Cloud platforms** (AWS, GCP, Azure)
 
-See the `deployment/` directory for specific deployment configurations.
+See the `DEPLOYMENT.md` file for detailed deployment instructions.
+
+### Deployment URLs
+
+Once deployed, your application will be available at:
+- Railway: `https://<project-name>.railway.app`
+- Heroku: `https://<app-name>.herokuapp.com`
+
+Access points:
+- API Documentation: `/docs`
+- Health Check: `/health`
+- API Base: `/api/v1`
 
 ## API Documentation
 
 Once running, access the API documentation:
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
+
+## Quality Assurance
+
+### Preventing Poetry Lock Mismatches
+
+The project includes comprehensive validation to prevent poetry.lock mismatches:
+
+1. **Pre-commit hooks**: Automatically validate lock file sync on commit
+2. **CI/CD validation**: Scripts ensure lock file is properly maintained
+3. **Dockerfile standards**: ENV format validation
+
+### Validation Commands
+
+```bash
+# Check poetry.lock sync
+poetry lock --check
+
+# Run all validation checks
+./scripts/ci_validation.sh
+
+# Install pre-commit hooks
+poetry run pre-commit install
+```
 
 ## Project Structure
 
@@ -116,5 +171,8 @@ fastapi-production-app/
 ├── tests/              # Test suite
 ├── alembic/            # Database migrations
 ├── deployment/         # Deployment configurations
+├── scripts/            # Validation and utility scripts
+│   ├── ci_validation.sh
+│   └── validate_dependencies.py
 └── docs/              # Additional documentation
 ```

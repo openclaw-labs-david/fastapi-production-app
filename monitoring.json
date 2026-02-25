@@ -1,0 +1,36 @@
+{
+  "health_checks": [
+    {
+      "name": "api_health",
+      "url": "/health",
+      "method": "GET",
+      "expected_status": 200,
+      "timeout": 30,
+      "interval": 60
+    },
+    {
+      "name": "api_docs",
+      "url": "/docs",
+      "method": "GET",
+      "expected_status": 200,
+      "timeout": 30,
+      "interval": 300
+    }
+  ],
+  "metrics": {
+    "enabled": true,
+    "endpoint": "/metrics",
+    "port": 8000
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "json",
+    "file": "/var/log/fastapi-app.log"
+  },
+  "alerts": {
+    "cpu_threshold": 80,
+    "memory_threshold": 85,
+    "disk_threshold": 90,
+    "response_time_threshold": 5000
+  }
+}
