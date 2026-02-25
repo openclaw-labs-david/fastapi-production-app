@@ -52,16 +52,16 @@ jobs:
     - name: Build Docker image
       run: docker build -t fastapi-production-app .
 
-  deploy:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    needs: [test, docker]
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Deploy to Railway
-      uses: railwayhq/railway-action@v1
-      with:
-        token: ${{ secrets.RAILWAY_TOKEN }}
-        environment: production
+  #deploy:
+  #  runs-on: ubuntu-latest
+  #  if: github.ref == 'refs/heads/main'
+  #  needs: [test, docker]
+  #  
+  #  steps:
+  #  - uses: actions/checkout@v4
+  #  
+  #  - name: Deploy to Railway
+  #    uses: railwayhq/railway-action@v1
+  #    with:
+  #      token: ${{ secrets.RAILWAY_TOKEN }}
+  #      environment: production
