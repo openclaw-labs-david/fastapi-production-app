@@ -373,10 +373,12 @@ dependencies = [
 dev = [
     { name = "black" },
     { name = "flake8" },
-    { name = "httpx" },
     { name = "isort" },
     { name = "mypy" },
     { name = "pre-commit" },
+]
+test = [
+    { name = "httpx" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
 ]
@@ -389,21 +391,21 @@ requires-dist = [
     { name = "black", marker = "extra == 'dev'", specifier = ">=23.11.0" },
     { name = "fastapi", git = "https://github.com/tiangolo/fastapi" },
     { name = "flake8", marker = "extra == 'dev'", specifier = ">=6.1.0" },
-    { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.25.2" },
+    { name = "httpx", marker = "extra == 'test'", specifier = ">=0.25.2" },
     { name = "isort", marker = "extra == 'dev'", specifier = ">=5.13.2" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.7.1" },
     { name = "passlib", specifier = ">=1.7.4" },
     { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=3.5.0" },
     { name = "pydantic", extras = ["email"], specifier = ">=2.5.0" },
     { name = "pydantic-settings", specifier = ">=2.1.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.4.3" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.23.2" },
+    { name = "pytest", marker = "extra == 'test'", specifier = ">=7.4.3" },
+    { name = "pytest-asyncio", marker = "extra == 'test'", specifier = ">=0.23.2" },
     { name = "python-jose", specifier = ">=3.3.0" },
     { name = "python-multipart", specifier = ">=0.0.6" },
     { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.0.23" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.24.0" },
 ]
-provides-extras = ["dev"]
+provides-extras = ["dev", "test"]
 
 [[package]]
 name = "filelock"
